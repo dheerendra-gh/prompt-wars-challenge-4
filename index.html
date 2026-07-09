@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DC Command - GenAI Tournament Venue Command Center</title>
+  <meta name="description" content="State-of-the-art GenAI-enabled architecture optimizing venue operations and tournament experience.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="glow-blob glow-1"></div>
+  <div class="glow-blob glow-2"></div>
+  <div class="glow-blob glow-3"></div>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand-section">
+          <div class="brand-logo" id="dc-logo-container">
+            <svg viewBox="0 0 100 100" width="38" height="38" style="filter: drop-shadow(0 0 5px var(--neon-cyan)); display: block;">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-cyan)" stroke-width="4.5" />
+              <circle cx="50" cy="50" r="38" fill="none" stroke="var(--neon-blue)" stroke-width="1.5" stroke-dasharray="6, 3" />
+              <text x="50" y="59" font-family="'Outfit', sans-serif" font-weight="900" font-size="28" fill="#ffffff" text-anchor="middle" letter-spacing="-1">DC</text>
+            </svg>
+          </div>
+          <div class="brand-title">
+            <h1>DC COMMAND</h1>
+            <span>Tournament</span>
+          </div>
+        </div>
+        
+        <nav>
+          <ul class="nav-menu">
+            <li class="nav-item">
+              <a class="nav-link active" data-panel="organizer" id="nav-organizer">
+                <span class="nav-icon">📊</span>
+                <span>Organizer Command</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-panel="fan" id="nav-fan">
+                <span class="nav-icon">🎟️</span>
+                <span>Fan Experience</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-panel="volunteer" id="nav-volunteer">
+                <span class="nav-icon">🙋</span>
+                <span>Staff & Volunteers</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-panel="settings" id="nav-settings">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings & Sim</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="api-status" id="api-status-box">
+          <span class="status-indicator simulated" id="api-status-indicator"></span>
+          <span id="api-status-text">DC Simulated AI</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="top-header">
+        <div class="header-title">
+          <h2 id="header-panel-title">Organizer Command Center</h2>
+        </div>
+        <div class="header-actions">
+          <div class="live-badge">
+            <span class="live-dot"></span>
+            <span>LIVE OPS</span>
+          </div>
+          <div class="role-tag" id="header-role-tag">Organizer</div>
+        </div>
+      </header>
+
+      <!-- 1. ORGANIZER COMMAND PANEL -->
+      <section class="panel active" id="panel-organizer">
+        <!-- Live Stats Overview -->
+        <div class="card-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Total Attendees</span>
+              <span class="stat-icon">👥</span>
+            </div>
+            <div class="stat-value" id="stat-attendees">14,240</div>
+            <div class="stat-footer">
+              <span class="trend-up">↑ 8.2%</span> vs last hour
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Avg Concession Wait</span>
+              <span class="stat-icon">🍔</span>
+            </div>
+            <div class="stat-value" id="stat-wait-time">14m</div>
+            <div class="stat-footer" id="stat-wait-trend">
+              <span class="trend-down">↓ 1.5m</span> since reroute
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Staff Deployment</span>
+              <span class="stat-icon">👮</span>
+            </div>
+            <div class="stat-value" id="stat-staff">92%</div>
+            <div class="stat-footer">
+              <span class="trend-up">12 active</span> volunteers
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Active AI Alerts</span>
+              <span class="stat-icon">🔔</span>
+            </div>
+            <div class="stat-value" id="stat-alerts" style="color: var(--color-warning);">2</div>
+            <div class="stat-footer" id="stat-alerts-footer">
+              Decision actions pending
+            </div>
+          </div>
+        </div>
+
+        <!-- Split Layout: Map & Operations Sidebar -->
+        <div class="dashboard-layout">
+          <!-- Interactive Map -->
+          <div class="map-card">
+            <div class="map-header">
+              <h3>Live Venue Heatmap & Crowds</h3>
+              <div class="map-legend">
+                <div class="legend-item"><span class="legend-dot" style="background-color: var(--color-success)"></span> Low (<40%)</div>
+                <div class="legend-item"><span class="legend-dot" style="background-color: var(--color-warning)"></span> Moderate (40-70%)</div>
+                <div class="legend-item"><span class="legend-dot" style="background-color: var(--color-danger)"></span> High (>70%)</div>
+              </div>
+            </div>
+            <div class="map-canvas-container">
+              <svg class="map-svg" id="organizer-map-svg" viewBox="0 0 800 500" width="100%"></svg>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); text-align: center;">
+              💡 Hover over any node to view exact capacity loads and description details.
+            </div>
+          </div>
+
+          <!-- AI Support Column -->
+          <div class="sidebar-panel">
+            <div class="sub-card">
+              <h3><span>🤖</span> AI Decision Recommendations</h3>
+              <div class="ai-recommendation-list" id="ai-recommendations">
+                <!-- Recommendations will be populated here -->
+              </div>
+            </div>
+
+            <div class="sub-card">
+              <h3><span>📅</span> Tournament Schedule</h3>
+              <div class="event-list" id="schedule-list">
+                <!-- Events will be populated here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. FAN EXPERIENCE PANEL -->
+      <section class="panel" id="panel-fan">
+        <div class="fan-layout">
+          <!-- Navigation & Map -->
+          <div class="map-card" style="display: flex; flex-direction: column; gap: 20px;">
+            <h3>🗺️ Smart Indoor Navigation</h3>
+            
+            <div class="wayfinding-controls">
+              <div class="input-group">
+                <label for="fan-origin-select">Current Location:</label>
+                <select id="fan-origin-select" class="styled-select">
+                  <option value="" disabled selected>Select starting location</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="fan-dest-select">Where are you going?</label>
+                <select id="fan-dest-select" class="styled-select">
+                  <option value="" disabled selected>Select destination</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+              <div id="fan-route-results" class="nav-results-card" style="display: none;">
+                <div class="nav-results-row">
+                  <span>Estimated Walking Time:</span>
+                  <strong id="fan-route-time" style="color: var(--neon-cyan)">3 minutes</strong>
+                </div>
+                <div class="nav-results-row">
+                  <span>Routing Distance:</span>
+                  <strong id="fan-route-dist">240 meters</strong>
+                </div>
+                <div class="nav-results-row" id="fan-congestion-warning-row" style="display: none;">
+                  <span>Congestion Alert:</span>
+                  <strong style="color: var(--color-warning);">Moderate Crowding in path</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-canvas-container">
+              <svg class="map-svg" id="fan-map-svg" viewBox="0 0 800 500" width="100%"></svg>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); text-align: center;">
+              💡 Use dropdowns or click points directly on the map to plot your path.
+            </div>
+          </div>
+
+          <!-- Chat Assistant -->
+          <div class="ai-chat-card">
+            <div class="chat-header">
+              <div class="chat-agent-info">
+                <div class="chat-avatar">DC</div>
+                <div class="chat-details">
+                  <h4>DC AI Assistant</h4>
+                  <span>GenAI Assistant • Online</span>
+                </div>
+              </div>
+              <div class="role-tag" style="background: rgba(6, 182, 212, 0.15); color: var(--color-info); border-color: rgba(6, 182, 212, 0.3)">
+                Gemini
+              </div>
+            </div>
+
+            <div class="chat-messages-container" id="chat-messages">
+              <div class="chat-message ai">
+                <p>Hello! Welcome to the Tournament. I am the <strong>DC AI Assistant</strong>, your operations companion.</p>
+                <p>I can help you navigate to concessions, restrooms, gates, or seating sectors. I can also look up match schedules or translate terms. What would you like to know?</p>
+              </div>
+              <!-- Simulated typing indicator -->
+              <div class="typing-indicator" id="chat-typing-indicator">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+              </div>
+            </div>
+
+            <!-- Quick prompts scroll -->
+            <div class="quick-prompts">
+              <button class="quick-prompt-btn" data-prompt="Where is the nearest food court?">🍔 Concession loads</button>
+              <button class="quick-prompt-btn" data-prompt="Which restroom has a shorter line?">🚻 Shorter restroom line</button>
+              <button class="quick-prompt-btn" data-prompt="What matches are currently ongoing?">🎾 Current matches</button>
+              <button class="quick-prompt-btn" data-prompt="How do I get to Seating Sector 104?">🗺️ Guide to Sector 104</button>
+            </div>
+
+            <div class="chat-input-container">
+              <input type="text" id="chat-input-field" class="chat-input" placeholder="Type a message or ask for translation...">
+              <button id="chat-send-btn" class="chat-send-btn">➔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. VOLUNTEER & STAFF PANEL -->
+      <section class="panel" id="panel-volunteer">
+        <div class="staff-layout">
+          <!-- Task dispatcher -->
+          <div class="task-board sub-card">
+            <h3><span>📋</span> AI Task Dispatch Board</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+              Tasks automatically dispatched to staff and volunteers based on crowd patterns, weather changes, and operational incidents.
+            </p>
+            <div class="task-list" id="volunteer-task-list">
+              <!-- Tasks will be populated here -->
+            </div>
+          </div>
+
+          <!-- Translation tool -->
+          <div class="translator-box sub-card">
+            <h3><span>🗣️</span> Live Translation Tool</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+              Communicate easily with international fans. Type English helper statements below to instantly translate.
+            </p>
+            
+            <div class="language-selectors">
+              <select id="translator-source-lang" class="styled-select" disabled>
+                <option value="en">English</option>
+              </select>
+              <button class="swap-languages" title="Disabled for English source">⇄</button>
+              <select id="translator-target-lang" class="styled-select">
+                <option value="es">Spanish (Español)</option>
+                <option value="fr">French (Français)</option>
+                <option value="hi" selected>Hindi (हिन्दी)</option>
+                <option value="ja">Japanese (日本語)</option>
+              </select>
+            </div>
+
+            <div class="translation-grid">
+              <textarea id="translator-input-text" class="translation-textarea" placeholder="Type message in English... (e.g., 'Hello, how can I help you?')"></textarea>
+              
+              <div class="translation-output-box" id="translator-output-box">
+                <span class="translation-output-placeholder">Translated message will appear here...</span>
+              </div>
+            </div>
+
+            <!-- Quick phrases helper -->
+            <div style="margin-top: 14px;">
+              <span style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Quick Statements:</span>
+              <div class="quick-prompts" style="padding: 0; overflow-x: auto;">
+                <button class="quick-prompt-btn helper-phrase-btn" data-phrase="Hello, how can I help you?">Greeting</button>
+                <button class="quick-prompt-btn helper-phrase-btn" data-phrase="Where is your ticket?">Ask Ticket</button>
+                <button class="quick-prompt-btn helper-phrase-btn" data-phrase="The match is starting now.">Match Start</button>
+                <button class="quick-prompt-btn helper-phrase-btn" data-phrase="Please follow this path to Gate 3.">Direct to Gate 3</button>
+              </div>
+            </div>
+
+            <div class="translation-action-row" style="margin-top: 16px;">
+              <button id="translator-submit-btn" class="translate-btn">Translate with Gemini</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. SETTINGS & SIMULATOR PANEL -->
+      <section class="panel" id="panel-settings">
+        <div class="settings-layout">
+          <!-- Gemini API Config -->
+          <div class="settings-card">
+            <h3>🔑 Gemini API Configuration</h3>
+            <div class="settings-form">
+              <div class="input-group">
+                <label for="settings-api-key">Google Gemini API Key:</label>
+                <input type="password" id="settings-api-key" class="styled-input" placeholder="AIzaSy...">
+              </div>
+              <p class="settings-help">
+                Enter your Developer Gemini API Key to enable <strong>live streaming LLM text generation</strong> and <strong>high-fidelity translations</strong> directly from Gemini models. 
+                Your key is stored securely on your browser in <code>localStorage</code> and never sent to any third-party backend.
+                If no key is configured, the DC AI uses a sophisticated client-side rules-based simulation engine.
+              </p>
+              <button id="settings-save-key-btn" class="settings-btn-save">Save API Key</button>
+            </div>
+          </div>
+
+          <!-- Scenario Simulation Controls -->
+          <div class="settings-card">
+            <h3>⛈️ Operational Scenario Simulator</h3>
+            <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
+              Trigger scenarios to simulate tournament events. The platform's AI layers will adapt: updating crowd heatmap levels, regenerating decisions for organisers, creating new tasks for volunteers, and updating chatbots.
+            </p>
+            
+            <div class="simulation-trigger-grid" id="sim-scenario-grid">
+              <!-- Scenario trigger cards populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

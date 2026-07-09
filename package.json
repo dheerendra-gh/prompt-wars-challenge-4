@@ -1,0 +1,12 @@
+{
+  "name": "prompt-wars-challenge-4",
+  "version": "1.0.0",
+  "description": "GenAI-enabled Venue Operations & Tournament Experience Platform",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {}
+}
