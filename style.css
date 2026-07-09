@@ -42,11 +42,15 @@
 
 body {
   font-family: var(--font-sans);
-  background: radial-gradient(circle at 50% 50%, #0d122b 0%, #04060f 100%);
+  background:
+    radial-gradient(circle at top left, rgba(0, 242, 254, 0.26), transparent 30%),
+    radial-gradient(circle at 85% 10%, rgba(168, 85, 247, 0.24), transparent 28%),
+    linear-gradient(135deg, #060816 0%, #0f1631 48%, #1a2346 100%);
   color: var(--text-main);
   overflow-x: hidden;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   position: relative;
 }
 
@@ -108,10 +112,82 @@ body {
 }
 
 /* App Layout */
+.site-header {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  background: rgba(7, 10, 24, 0.78);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-brand h1 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.site-brand p {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.site-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-pill,
+.header-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.live-pill {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(236, 72, 153, 0.9));
+}
+
+.header-chip {
+  color: var(--neon-cyan);
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.24);
+}
+
+.site-footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 28px 22px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  background: rgba(7, 10, 24, 0.72);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
 .app-container {
   display: flex;
-  width: 100vw;
-  min-height: 100vh;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
   position: relative;
   z-index: 2;
   background: transparent;
@@ -252,8 +328,8 @@ body {
 
 /* Main Display Panels */
 .main-content {
-  flex-grow: 1;
-  height: 100vh;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   position: relative;
   display: flex;
@@ -445,6 +521,22 @@ body {
 }
 
 @media (max-width: 900px) {
+  .site-header,
+  .site-footer {
+    padding: 16px 20px;
+  }
+
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .app-container {
     flex-direction: column;
     width: 100%;
