@@ -89,28 +89,28 @@
           </div>
         </div>
         
-        <nav>
-          <ul class="nav-menu">
-            <li class="nav-item">
-              <a class="nav-link active" data-panel="organizer" id="nav-organizer">
+        <nav role="navigation" aria-label="Main Navigation">
+          <ul class="nav-menu" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a href="#" class="nav-link active" data-panel="organizer" id="nav-organizer" role="tab" aria-selected="true" aria-controls="panel-organizer">
                 <span class="nav-icon">📊</span>
                 <span>Organizer Command</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-panel="fan" id="nav-fan">
+            <li class="nav-item" role="presentation">
+              <a href="#" class="nav-link" data-panel="fan" id="nav-fan" role="tab" aria-selected="false" aria-controls="panel-fan">
                 <span class="nav-icon">🎟️</span>
                 <span>Fan Experience</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-panel="volunteer" id="nav-volunteer">
+            <li class="nav-item" role="presentation">
+              <a href="#" class="nav-link" data-panel="volunteer" id="nav-volunteer" role="tab" aria-selected="false" aria-controls="panel-volunteer">
                 <span class="nav-icon">🙋</span>
                 <span>Staff & Volunteers</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-panel="settings" id="nav-settings">
+            <li class="nav-item" role="presentation">
+              <a href="#" class="nav-link" data-panel="settings" id="nav-settings" role="tab" aria-selected="false" aria-controls="panel-settings">
                 <span class="nav-icon">⚙️</span>
                 <span>Settings & Sim</span>
               </a>
@@ -144,7 +144,7 @@
       </header>
 
       <!-- 1. ORGANIZER COMMAND PANEL -->
-      <section class="panel active" id="panel-organizer">
+      <section class="panel active" id="panel-organizer" role="tabpanel" aria-labelledby="nav-organizer">
         <!-- Live Stats Overview -->
         <div class="card-grid">
           <div class="stat-card">
@@ -202,7 +202,7 @@
               </div>
             </div>
             <div class="map-canvas-container">
-              <svg class="map-svg" id="organizer-map-svg" viewBox="0 0 800 500" width="100%"></svg>
+               <svg class="map-svg" id="organizer-map-svg" viewBox="0 0 800 500" width="100%" role="application" aria-label="Interactive Venue Operations Map"></svg>
             </div>
             <div style="font-size: 12px; color: var(--text-secondary); text-align: center;">
               💡 Hover over any node to view exact capacity loads and description details.
@@ -237,7 +237,7 @@
       </section>
 
       <!-- 2. FAN EXPERIENCE PANEL -->
-      <section class="panel" id="panel-fan">
+      <section class="panel" id="panel-fan" role="tabpanel" aria-labelledby="nav-fan">
         <div class="fan-layout">
           <!-- Navigation & Map -->
           <div class="map-card" style="display: flex; flex-direction: column; gap: 20px;">
@@ -300,7 +300,7 @@
             </div>
 
             <div class="map-canvas-container">
-              <svg class="map-svg" id="fan-map-svg" viewBox="0 0 800 500" width="100%"></svg>
+               <svg class="map-svg" id="fan-map-svg" viewBox="0 0 800 500" width="100%" role="application" aria-label="Interactive Fan Wayfinding Map"></svg>
             </div>
             <div style="font-size: 12px; color: var(--text-secondary); text-align: center;">
               💡 Use dropdowns or click points directly on the map to plot your path.
@@ -344,15 +344,15 @@
             </div>
 
             <div class="chat-input-container">
-              <input type="text" id="chat-input-field" class="chat-input" placeholder="Type a message or ask for translation...">
-              <button id="chat-send-btn" class="chat-send-btn">➔</button>
+              <input type="text" id="chat-input-field" class="chat-input" placeholder="Type a message or ask for translation..." aria-label="Ask the GenAI Assistant a question or request a translation">
+              <button id="chat-send-btn" class="chat-send-btn" aria-label="Send message">➔</button>
             </div>
           </div>
         </div>
       </section>
 
       <!-- 3. VOLUNTEER & STAFF PANEL -->
-      <section class="panel" id="panel-volunteer">
+      <section class="panel" id="panel-volunteer" role="tabpanel" aria-labelledby="nav-volunteer">
         <div class="staff-layout">
           <!-- Task dispatcher -->
           <div class="task-board sub-card">
@@ -376,7 +376,7 @@
               <select id="translator-source-lang" class="styled-select" disabled>
                 <option value="en">English</option>
               </select>
-              <button class="swap-languages" title="Disabled for English source">⇄</button>
+               <button class="swap-languages" title="Disabled for English source" aria-label="Swap source and target languages">⇄</button>
               <select id="translator-target-lang" class="styled-select">
                 <option value="es">Spanish (Español)</option>
                 <option value="fr">French (Français)</option>
@@ -412,7 +412,7 @@
       </section>
 
       <!-- 4. SETTINGS & SIMULATOR PANEL -->
-      <section class="panel" id="panel-settings">
+      <section class="panel" id="panel-settings" role="tabpanel" aria-labelledby="nav-settings">
         <div class="settings-layout">
           <!-- Gemini API Config -->
           <div class="settings-card">
@@ -437,28 +437,28 @@
             <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
               Personalize the visual identity of the MetLife Command Center. Choose from high-fidelity gradient templates designed for optimal readability during day/night operations.
             </p>
-            <div class="theme-selection-grid" id="theme-selector-grid">
-              <div class="theme-card active" data-theme="midnight">
-                <div class="theme-preview-circle" style="background: linear-gradient(135deg, #070913, #1a2346);"></div>
-                <span class="theme-card-title">Midnight Neon</span>
-              </div>
-              <div class="theme-card" data-theme="forest">
-                <div class="theme-preview-circle" style="background: linear-gradient(135deg, #040b08, #0c2b1c);"></div>
-                <span class="theme-card-title">Emerald Pitch</span>
-              </div>
-              <div class="theme-card" data-theme="sunset">
-                <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0c0408, #2e0c1f);"></div>
-                <span class="theme-card-title">Stadium Crimson</span>
-              </div>
-              <div class="theme-card" data-theme="cyber">
-                <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0c0903, #302009);"></div>
-                <span class="theme-card-title">Cyberpunk Gold</span>
-              </div>
-              <div class="theme-card" data-theme="carbon">
-                <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0d0d0d, #262626);"></div>
-                <span class="theme-card-title">Tactical Carbon</span>
-              </div>
-            </div>
+             <div class="theme-selection-grid" id="theme-selector-grid" role="radiogroup" aria-label="Select Application Theme">
+               <div class="theme-card active" data-theme="midnight" role="radio" aria-checked="true" tabindex="0" aria-label="Midnight Neon Theme">
+                 <div class="theme-preview-circle" style="background: linear-gradient(135deg, #070913, #1a2346);"></div>
+                 <span class="theme-card-title">Midnight Neon</span>
+               </div>
+               <div class="theme-card" data-theme="forest" role="radio" aria-checked="false" tabindex="0" aria-label="Emerald Pitch Theme">
+                 <div class="theme-preview-circle" style="background: linear-gradient(135deg, #040b08, #0c2b1c);"></div>
+                 <span class="theme-card-title">Emerald Pitch</span>
+               </div>
+               <div class="theme-card" data-theme="sunset" role="radio" aria-checked="false" tabindex="0" aria-label="Stadium Crimson Theme">
+                 <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0c0408, #2e0c1f);"></div>
+                 <span class="theme-card-title">Stadium Crimson</span>
+               </div>
+               <div class="theme-card" data-theme="cyber" role="radio" aria-checked="false" tabindex="0" aria-label="Cyberpunk Gold Theme">
+                 <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0c0903, #302009);"></div>
+                 <span class="theme-card-title">Cyberpunk Gold</span>
+               </div>
+               <div class="theme-card" data-theme="carbon" role="radio" aria-checked="false" tabindex="0" aria-label="Tactical Carbon Theme">
+                 <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0d0d0d, #262626);"></div>
+                 <span class="theme-card-title">Tactical Carbon</span>
+               </div>
+             </div>
           </div>
 
           <!-- Scenario Simulation Controls -->

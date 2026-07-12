@@ -170,6 +170,9 @@ export function renderVenueMap(svgEl, nodes, edges, crowdLevels = {}, onNodeClic
     const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
     nodeG.setAttribute("class", `svg-node ${densityClass} node-type-${node.type}`);
     nodeG.setAttribute("data-id", nodeId);
+    nodeG.setAttribute("tabindex", "0");
+    nodeG.setAttribute("role", "button");
+    nodeG.setAttribute("aria-label", `${node.name}. Capacity crowd load: ${crowd}%. Type: ${node.type}`);
     
     if (selectedNodes.start === nodeId || selectedNodes.end === nodeId) {
       nodeG.classList.add("selected-node");
@@ -229,9 +232,17 @@ export function renderVenueMap(svgEl, nodes, edges, crowdLevels = {}, onNodeClic
     // Interaction Tooltip data
     nodeG.addEventListener("mouseenter", (e) => showMapTooltip(e, node, crowd));
     nodeG.addEventListener("mouseleave", hideMapTooltip);
+    nodeG.addEventListener("focus", (e) => showMapTooltip(e, node, crowd));
+    nodeG.addEventListener("blur", hideMapTooltip);
     
     if (onNodeClick) {
       nodeG.addEventListener("click", () => onNodeClick(nodeId));
+      nodeG.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onNodeClick(nodeId);
+        }
+      });
     }
 
     nodeG.appendChild(circle);
@@ -345,12 +356,28 @@ function showMapTooltip(event, node, crowd) {
   `;
 
   tooltip.style.display = "block";
-  updateTooltipPosition(event, tooltip);
+  updateTooltipPosition(event, tooltip, node);
 }
 
-function updateTooltipPosition(event, tooltip) {
-  const x = event.clientX;
-  const y = event.clientY;
+function updateTooltipPosition(event, tooltip, node) {
+  let x, y;
+  if (event && typeof event.clientX === 'number') {
+    x = event.clientX;
+    y = event.clientY;
+  } else if (node) {
+    const svg = document.getElementById("organizer-map-svg") || document.getElementById("fan-map-svg");
+    if (svg) {
+      const rect = svg.getBoundingClientRect();
+      x = rect.left + (node.x / 800) * rect.width;
+      y = rect.top + (node.y / 500) * rect.height;
+    } else {
+      x = 400;
+      y = 250;
+    }
+  } else {
+    x = 400;
+    y = 250;
+  }
   tooltip.style.left = `${x + 15}px`;
   tooltip.style.top = `${y + 15}px`;
 }

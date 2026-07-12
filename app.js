@@ -87,8 +87,12 @@ function setupNavigation() {
       state.activePanel = targetPanel;
       
       // Update sidebar nav state
-      navLinks.forEach(l => l.classList.remove("active"));
+      navLinks.forEach(l => {
+        l.classList.remove("active");
+        l.setAttribute("aria-selected", "false");
+      });
       link.classList.add("active");
+      link.setAttribute("aria-selected", "true");
       
       // Update panel visibility
       panels.forEach(p => p.classList.remove("active"));
@@ -534,10 +538,19 @@ function setupSettings() {
   // Theme Switching Event Listeners
   const themeCards = document.querySelectorAll("#theme-selector-grid .theme-card");
   themeCards.forEach(card => {
-    card.addEventListener("click", () => {
+    const triggerTheme = () => {
       const selectedTheme = card.getAttribute("data-theme");
       applyTheme(selectedTheme);
       showToast(`Visual Theme updated to: ${card.querySelector(".theme-card-title").textContent}`);
+    };
+
+    card.addEventListener("click", triggerTheme);
+
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        triggerTheme();
+      }
     });
   });
 }
@@ -558,8 +571,10 @@ function applyTheme(themeName) {
   themeCards.forEach(card => {
     if (card.getAttribute("data-theme") === themeName) {
       card.classList.add("active");
+      card.setAttribute("aria-checked", "true");
     } else {
       card.classList.remove("active");
+      card.setAttribute("aria-checked", "false");
     }
   });
 }

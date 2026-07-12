@@ -1824,3 +1824,31 @@ body.theme-carbon {
   font-weight: 600;
   color: var(--text-main);
 }
+
+/* --- Keyboard Accessibility Focus States --- */
+
+.svg-node:focus-visible {
+  outline: none;
+}
+
+.svg-node:focus-visible circle {
+  stroke: #ffffff !important;
+  stroke-width: 3.5 !important;
+  filter: drop-shadow(0 0 12px #ffffff) !important;
+}
+
+.theme-card:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+.pref-checkbox:focus-visible + .pref-custom-btn {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
