@@ -14,7 +14,8 @@ const state = {
   selectedNavNodes: { start: null, end: null },
   activePath: [],
   chatHistory: [],
-  routePreferences: { accessibility: false, eco: false }
+  routePreferences: { accessibility: false, eco: false },
+  theme: localStorage.getItem("app_theme") || "midnight"
 };
 
 // Initialize App
@@ -53,6 +54,9 @@ function initAppState() {
     apiStatusIndicator.className = "status-indicator simulated";
     apiStatusText.textContent = "DC Simulated AI";
   }
+
+  // Initialize theme
+  applyTheme(state.theme);
 }
 
 // 1. Sidebar Tab Switching Navigation
@@ -525,6 +529,38 @@ function setupSettings() {
     }
     
     renderAll();
+  });
+
+  // Theme Switching Event Listeners
+  const themeCards = document.querySelectorAll("#theme-selector-grid .theme-card");
+  themeCards.forEach(card => {
+    card.addEventListener("click", () => {
+      const selectedTheme = card.getAttribute("data-theme");
+      applyTheme(selectedTheme);
+      showToast(`Visual Theme updated to: ${card.querySelector(".theme-card-title").textContent}`);
+    });
+  });
+}
+
+function applyTheme(themeName) {
+  state.theme = themeName;
+  localStorage.setItem("app_theme", themeName);
+
+  // Update body classes
+  const body = document.body;
+  body.classList.remove("theme-forest", "theme-sunset", "theme-cyber", "theme-carbon");
+  if (themeName !== "midnight") {
+    body.classList.add(`theme-${themeName}`);
+  }
+
+  // Update active states on the settings cards
+  const themeCards = document.querySelectorAll("#theme-selector-grid .theme-card");
+  themeCards.forEach(card => {
+    if (card.getAttribute("data-theme") === themeName) {
+      card.classList.add("active");
+    } else {
+      card.classList.remove("active");
+    }
   });
 }
 
