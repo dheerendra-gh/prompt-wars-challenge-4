@@ -39,7 +39,7 @@ test('server serves the homepage and blocks path traversal', async () => {
     const homeResponse = await request(server, '/');
     assert.equal(homeResponse.statusCode, 200);
     assert.match(homeResponse.headers['content-type'] || '', /text\/html/);
-    assert.match(homeResponse.body, /DC COMMAND/);
+    assert.match(homeResponse.body, /METLIFE LIVE/);
 
     const traversalResponse = await request(server, '/..%2Fpackage.json');
     assert.equal(traversalResponse.statusCode, 403);

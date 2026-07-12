@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DC Command - GenAI Tournament Venue Command Center</title>
-  <meta name="description" content="State-of-the-art GenAI-enabled architecture optimizing venue operations and tournament experience.">
+  <title>MetLife Command - FIFA World Cup 2026™ Venue Operations & Fan Hub</title>
+  <meta name="description" content="State-of-the-art GenAI-enabled architecture optimizing venue operations and fan experience for the FIFA World Cup 2026.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,10 +22,49 @@
         </svg>
       </div>
       <div>
-        <h1>DC Live Suite</h1>
-        <p>AI-powered tournament operations and fan experience</p>
+        <h1>MetLife Command</h1>
+        <p>FIFA World Cup 2026™ Stadium Operations & Fan Portal</p>
       </div>
     </div>
+    
+    <div class="slogan-marquee-container">
+      <div class="slogan-marquee-track">
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">We Are 26™ — Welcome to MetLife Stadium!</span>
+        </div>
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">Feel the Passion, Live the Dream!</span>
+        </div>
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">Celebrating Football Unity!</span>
+        </div>
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">Where the World Comes to Play!</span>
+        </div>
+        <!-- Duplicate for infinite seamless scroll -->
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">We Are 26™ — Welcome to MetLife Stadium!</span>
+        </div>
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">Feel the Passion, Live the Dream!</span>
+        </div>
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">Celebrating Football Unity!</span>
+        </div>
+        <div class="slogan-marquee-item">
+          <span class="football-emoji">⚽</span>
+          <span class="slogan-text">Where the World Comes to Play!</span>
+        </div>
+      </div>
+    </div>
+
     <div class="site-header-actions">
       <span class="live-pill">● Live now</span>
       <span class="header-chip">24/7 operations</span>
@@ -45,8 +84,8 @@
             </svg>
           </div>
           <div class="brand-title">
-            <h1>DC COMMAND</h1>
-            <span>Tournament</span>
+            <h1>METLIFE LIVE</h1>
+            <span>FIFA 2026™ Ops</span>
           </div>
         </div>
         
@@ -180,6 +219,14 @@
             </div>
 
             <div class="sub-card">
+              <h3><span>🧠</span> GenAI Stadium Intelligence</h3>
+              <div class="genai-summary-box" id="genai-operations-summary">
+                AI summary will appear here.
+              </div>
+              <div class="genai-highlight-list" id="genai-highlight-list"></div>
+            </div>
+
+            <div class="sub-card">
               <h3><span>📅</span> Tournament Schedule</h3>
               <div class="event-list" id="schedule-list">
                 <!-- Events will be populated here -->
@@ -211,6 +258,22 @@
                   <!-- Populated dynamically -->
                 </select>
               </div>
+
+              <!-- Routing Preferences -->
+              <div class="routing-preferences-container">
+                <span class="preferences-title">Routing Options:</span>
+                <div class="preferences-toggles">
+                  <label class="pref-toggle-label">
+                    <input type="checkbox" id="pref-accessibility" class="pref-checkbox">
+                    <span class="pref-custom-btn">♿ Accessible (ADA)</span>
+                  </label>
+                  <label class="pref-toggle-label">
+                    <input type="checkbox" id="pref-eco" class="pref-checkbox">
+                    <span class="pref-custom-btn">🌱 Eco-Friendly</span>
+                  </label>
+                </div>
+              </div>
+
               <div id="fan-route-results" class="nav-results-card" style="display: none;">
                 <div class="nav-results-row">
                   <span>Estimated Walking Time:</span>
@@ -223,6 +286,15 @@
                 <div class="nav-results-row" id="fan-congestion-warning-row" style="display: none;">
                   <span>Congestion Alert:</span>
                   <strong style="color: var(--color-warning);">Moderate Crowding in path</strong>
+                </div>
+                <!-- Dynamic preferences bonuses -->
+                <div class="nav-results-row" id="fan-eco-bonus-row" style="display: none; border-top: 1px dashed rgba(16, 185, 129, 0.25); padding-top: 8px; margin-top: 8px;">
+                  <span style="color: var(--color-success)">🌱 Green Impact:</span>
+                  <strong style="color: var(--color-success)" id="fan-eco-bonus-text">Water Refill hub enroute! (Saved 1 bottle)</strong>
+                </div>
+                <div class="nav-results-row" id="fan-accessibility-bonus-row" style="display: none; border-top: 1px dashed rgba(168, 85, 247, 0.25); padding-top: 8px; margin-top: 8px;">
+                  <span style="color: var(--neon-purple)">♿ Accessibility:</span>
+                  <strong style="color: var(--neon-purple)" id="fan-accessibility-bonus-text">Elevator-favored route. 0 stairs.</strong>
                 </div>
               </div>
             </div>
@@ -240,9 +312,9 @@
             <div class="chat-header">
               <div class="chat-agent-info">
                 <div class="chat-avatar">DC</div>
-                <div class="chat-details">
-                  <h4>DC AI Assistant</h4>
-                  <span>GenAI Assistant • Online</span>
+                 <div class="chat-details">
+                  <h4>FIFA 2026 GenAI Assistant</h4>
+                  <span>MetLife Operations Desk • Online</span>
                 </div>
               </div>
               <div class="role-tag" style="background: rgba(6, 182, 212, 0.15); color: var(--color-info); border-color: rgba(6, 182, 212, 0.3)">
@@ -252,8 +324,8 @@
 
             <div class="chat-messages-container" id="chat-messages">
               <div class="chat-message ai">
-                <p>Hello! Welcome to the Tournament. I am the <strong>DC AI Assistant</strong>, your operations companion.</p>
-                <p>I can help you navigate to concessions, restrooms, gates, or seating sectors. I can also look up match schedules or translate terms. What would you like to know?</p>
+                <p>Hello! Welcome to MetLife Stadium for the FIFA World Cup 2026. I am the <strong>FIFA World Cup GenAI Assistant</strong>, your operations and fan companion.</p>
+                <p>I can help you navigate to concessions, restrooms, gates, seating sections, water refills, or elevator lobbies. I can also look up match schedules or translate terms for international supporters. What would you like to know?</p>
               </div>
               <!-- Simulated typing indicator -->
               <div class="typing-indicator" id="chat-typing-indicator">
@@ -376,8 +448,8 @@
   </div>
 
   <footer class="site-footer">
-    <span>DC Command • Live tournament operations center</span>
-    <span>Smart routing • crowd insights • instant fan support</span>
+    <span>FIFA World Cup 2026™ Command • MetLife Stadium Operations Hub</span>
+    <span>Eco-friendly routing • crowd insights • instant accessibility & translation desk</span>
   </footer>
 
   <script type="module" src="app.js"></script>

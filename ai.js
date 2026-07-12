@@ -1,22 +1,52 @@
 // AI Integration Layer (Real Gemini API & High-fidelity Simulation Engine)
 
-// System prompt context for the tournament environment
+// System prompt context for the FIFA World Cup 2026 MetLife Stadium environment
 const VENUE_SYSTEM_PROMPT = `
-You are "DC AI Assistant", the GenAI Venue Operations & Tournament Assistant.
-You help fans, staff, and organizers manage the venue, find locations, understand schedules, and coordinate operations.
+You are "FIFA 2026 GenAI Assistant", the official GenAI Venue Operations & Fan Experience Companion for the FIFA World Cup 2026 at MetLife Stadium (New York/New Jersey).
+You help fans, staff, and organizers manage the venue, find locations, understand soccer match schedules, coordinate transit, and follow sustainability/accessibility rules.
 Be professional, concise, and helpful. Translate when requested.
 Current Venue Info:
-- Gates: Gate 1 (North, Parking), Gate 2 (East, Shuttles), Gate 3 (South, Transit), Gate 4 (West, VIP/Media).
-- Concessions: Zone A (North - Burger Bar & Brews), Zone B (South - Tacos & Pizza).
-- Restrooms: A (North-West), B (South-East).
-- Info Desk: Center of the venue.
-- Sponsor Expo Pavilion: East side.
-- Seating: Sectors 101 & 102 (North Tier), Sectors 103 & 104 (South Tier).
+- Gates: Gate A (North Entrance, Ride-Share, Parking), Gate B (East Entrance, Shuttle buses), Gate C (South Entrance, NJ Transit Stadium Station), Gate D (West VIP & Media Entrance).
+- Concessions: Concession Area North (Burgers & Dogs), Concession Area South (Tacos & Empanadas).
+- Restrooms: Block A (North-West, near Gate D/West Stand), Block B (South-East, near Gate B/East Stand).
+- Guest Services: Central Guest Services & ADA Hub (Center of the venue).
+- Fan Experience: FIFA Fan Festival & Sponsor Expo (East side near Gate B).
+- Seating: Section 110 (North Stand - USA Fan Club), Section 120 (East Stand Mid-Tier), Section 130 (South Stand - England Supporters), Section 140 (West Stand - Club Suite & VIP).
+- Sustainability: North Sustainability Hub (Water Refill & Recycling), South Sustainability Hub.
+- Accessibility: Central ADA Elevator Lobby (provides wheelchair ramp and elevator access near Section 140 and Section 110).
 `;
 
 /**
  * Sends a message to the Gemini API (streaming) or uses local simulation if key is missing.
  */
+export function buildOperationalIntelligenceSummary(context = {}) {
+  const scenarioName = context.activeScenario || 'normal';
+  const crowdHotspots = Object.entries(context.crowdLevels || {})
+    .filter(([, level]) => Number(level) > 70)
+    .map(([id]) => id)
+    .slice(0, 3);
+
+  const accessibilityRequests = Number(context.accessibilityRequests || 3);
+  const transportDemand = Number(context.transportDemand || 4);
+  const plasticSaved = Number(context.plasticSaved || 1420);
+  const energySavings = Number(context.energySavings || 45);
+
+  let scenarioText = "Normal Matchday";
+  if (scenarioName === "rain") scenarioText = "Severe Rainstorm Alert";
+  if (scenarioName === "emergency") scenarioText = "NJ Transit Rail Outage";
+  if (scenarioName === "sponsor") scenarioText = "Post-Match Peak Egress";
+
+  return [
+    `🏆 FIFA WORLD CUP 2026 OPERATIONAL BRIEF`,
+    `🏟️ Venue: MetLife Stadium, NY/NJ`,
+    `📋 Scenario Status: ${scenarioText.toUpperCase()}`,
+    `👥 Crowd Hotspots: ${crowdHotspots.length ? crowdHotspots.map(id => id.replace('_', ' ').toUpperCase()).join(', ') : 'Optimal Flow'}`,
+    `♿ Accessibility Support: ${accessibilityRequests} active wheelchair dispatches`,
+    `🚌 Transportation Flow: Reroutes active via ${transportDemand} stadium shuttles`,
+    `🌱 Sustainability Impact: Saved ${plasticSaved} plastic bottles today • Solar energy at ${energySavings}% capacity`
+  ].join('\n');
+}
+
 export async function sendMessageToAI({ prompt, apiKey, context = {}, onChunk, onDone, onError }) {
   if (apiKey && apiKey.trim() !== "") {
     try {
@@ -96,86 +126,103 @@ async function streamGeminiAPI(prompt, apiKey, context, onChunk, onDone, onError
 }
 
 /**
- * High-Fidelity Local Simulation Engine
+ * High-Fidelity Local Simulation Engine for FIFA World Cup 2026
  */
 function streamSimulation(prompt, context, onChunk, onDone) {
   const lowerPrompt = prompt.toLowerCase();
   let responseText = "";
 
   // Intent classification
-  if (lowerPrompt.includes("navigate") || lowerPrompt.includes("route") || lowerPrompt.includes("direction") || lowerPrompt.includes("get to") || lowerPrompt.includes("where is sector") || lowerPrompt.includes("go to")) {
-    responseText = `To navigate the venue, please use the **Smart Indoor Navigation** tool on the left panel. 
-    Select your current origin and desired destination (e.g., Gate 1 to Sector 104). The interactive SVG map will calculate the shortest path using operational pathfinding algorithms, estimate travel times, and warn you of any line congestion.
+  if (lowerPrompt.includes("navigate") || lowerPrompt.includes("route") || lowerPrompt.includes("direction") || lowerPrompt.includes("get to") || lowerPrompt.includes("where is section") || lowerPrompt.includes("go to") || lowerPrompt.includes("elevator") || lowerPrompt.includes("wheelchair")) {
+    responseText = `To navigate MetLife Stadium, please use the **Smart Indoor Navigation** tool on the left. 
+    Select your current origin and destination (e.g., Gate A to Section 140 VIP).
     
-    *Operational Note:* Currently, **${context.congestedNode || 'no sectors'}** is showing high congestion. You may want to choose routes that bypass this zone.`;
+    *GenAI Smart Toggles:*
+    1. **♿ Accessible (ADA) Mode**: Select this preference to route through the **Central ADA Elevator Lobby** and avoid stairs and high crowd corridors.
+    2. **🌱 Eco-Friendly Mode**: Select this to route through the **North/South Sustainability Hubs** so you can refill your water bottles and bypass single-use plastic zones.
+    
+    *Live Traffic Status:* Congestion is currently high around **${context.congestedNode || 'no gates'}** due to the match.`;
   } 
-  else if (lowerPrompt.includes("food") || lowerPrompt.includes("concession") || lowerPrompt.includes("eat") || lowerPrompt.includes("drink") || lowerPrompt.includes("burger") || lowerPrompt.includes("pizza") || lowerPrompt.includes("taco")) {
+  else if (lowerPrompt.includes("food") || lowerPrompt.includes("concession") || lowerPrompt.includes("eat") || lowerPrompt.includes("drink") || lowerPrompt.includes("burger") || lowerPrompt.includes("taco") || lowerPrompt.includes("empanada")) {
     const crowdA = context.crowdLevels?.concession_a || 65;
     const crowdB = context.crowdLevels?.concession_b || 40;
-    responseText = `We have two main Concession Zones:
-    1. **Concession Zone A (North Side)**: Specializes in Gourmet Burgers, Local Brews, and Salads. Currently operating at **${crowdA}% capacity** (${crowdA > 60 ? 'Busy' : 'Normal'}).
-    2. **Concession Zone B (South Side)**: Specializes in Artisanal Pizza, Street Tacos, and Fruit Smoothies. Currently operating at **${crowdB}% capacity** (${crowdB > 60 ? 'Busy' : 'Normal'}).
+    responseText = `MetLife Stadium concession options for the FIFA World Cup 2026:
+    1. **Concession Area North (near Section 120)**: Burgers, hot dogs, fries, and draft beers. Operating at **${crowdA}% capacity** (${crowdA > 60 ? 'Busy' : 'Normal'}).
+    2. **Concession Area South (near Section 130)**: Street tacos, empanadas, churros, and soda. Operating at **${crowdB}% capacity** (${crowdB > 60 ? 'Busy' : 'Normal'}).
     
-    *GenAI Tip:* If you are looking to avoid queues, **${crowdA < crowdB ? 'Concession Zone A' : 'Concession Zone B'}** has shorter lines right now!`;
+    *Eco Refill:* Both areas are supported by adjacent **Sustainability Hubs** for free filtered water. 
+    *Queue Tip:* Head to **${crowdA < crowdB ? 'Concession North' : 'Concession South'}** for shorter wait times right now!`;
   }
   else if (lowerPrompt.includes("restroom") || lowerPrompt.includes("toilet") || lowerPrompt.includes("washroom") || lowerPrompt.includes("bath")) {
     const crowdA = context.crowdLevels?.restroom_a || 30;
     const crowdB = context.crowdLevels?.restroom_b || 45;
-    responseText = `Restrooms are located in two areas of the concourse:
-    - **Restrooms A (North-West near Gate 4)**: Male, Female, and Family-accessible facilities. Current load is **${crowdA}%** (Estimated wait: ${Math.round(crowdA/10)} mins).
-    - **Restrooms B (South-East near Gate 2)**: Male, Female, and Family-accessible facilities. Current load is **${crowdB}%** (Estimated wait: ${Math.round(crowdB/10)} mins).
+    responseText = `Restrooms are located in the main concourse loops:
+    - **Restrooms Block A (North-West near Section 110)**: Male, Female, All-Gender, and ADA wheelchair facilities. Load is **${crowdA}%** (Wait time: ~${Math.round(crowdA/10)} mins).
+    - **Restrooms Block B (South-East near Section 130)**: Male, Female, All-Gender, and ADA wheelchair facilities. Load is **${crowdB}%** (Wait time: ~${Math.round(crowdB/10)} mins).
     
-    I recommend heading to **${crowdA < crowdB ? 'Restrooms A' : 'Restrooms B'}** as it currently has shorter wait times.`;
+    *Recommendation:* Head to **${crowdA < crowdB ? 'Restrooms Block A' : 'Restrooms Block B'}** for faster service.`;
   }
-  else if (lowerPrompt.includes("schedule") || lowerPrompt.includes("match") || lowerPrompt.includes("time") || lowerPrompt.includes("event") || lowerPrompt.includes("play")) {
-    responseText = `Here is the current Tournament Schedule for Today:
-    - **09:00 AM** - Gates Open & Morning Rush *(Completed)*
-    - **10:30 AM** - Tournament Opening Ceremony *(Completed)*
-    - **02:00 PM** - Quarter Finals: Match A (Tennis Singles) in **Sectors 101 & 102** *(Ongoing)*
-    - **04:30 PM** - Quarter Finals: Match B (Tennis Singles) in **Sectors 103 & 104** *(Upcoming)*
-    - **07:30 PM** - Semifinals & Sponsor Showdowns in **All Sectors & Expo Zone** *(Upcoming)*
+  else if (lowerPrompt.includes("schedule") || lowerPrompt.includes("match") || lowerPrompt.includes("time") || lowerPrompt.includes("play") || lowerPrompt.includes("game")) {
+    responseText = `Here is today's FIFA World Cup 2026 Matchday schedule at MetLife Stadium:
+    - **01:00 PM** - Gates & Security Screening Open *(Completed)*
+    - **03:30 PM** - FIFA Fan Festival Live sponsor concert *(Completed)*
+    - **06:00 PM** - Group B Match: **USA vs England** *(Ongoing - MetLife Pitch)*
+    - **08:30 PM** - Group B Match: **Mexico vs Argentina** *(Upcoming)*
+    - **11:00 PM** - Post-match egress & NJ Transit trains departure *(Upcoming)*
     
-    *Crowd Flow Advisory:* Crowd density in the South Tier (Sectors 103 & 104) is expected to rise sharply around **04:15 PM** in preparation for Quarter Finals Match B.`;
+    *Fan Advisory:* Transit queues at **Gate C (NJ Transit)** are expected to surge starting at **08:00 PM** as USA vs England fans head out.`;
+  }
+  else if (lowerPrompt.includes("bag") || lowerPrompt.includes("policy") || lowerPrompt.includes("clear bag") || lowerPrompt.includes("security")) {
+    responseText = `**FIFA World Cup 2026 Security & Bag Policy at MetLife Stadium:**
+    - Only **clear plastic, vinyl, or PVC bags** that do not exceed **12" x 6" x 12"** are allowed.
+    - Small clutch bags/purses (non-clear) are permitted if they do not exceed **4.5" x 6.5"** in size.
+    - All bags are subject to security screening. Medically necessary items and strollers are allowed but must go through specialized screening lanes at **Gate D (West VIP & Accessibility)**.`;
+  }
+  else if (lowerPrompt.includes("train") || lowerPrompt.includes("nyc") || lowerPrompt.includes("transport") || lowerPrompt.includes("shuttle") || lowerPrompt.includes("nj transit")) {
+    responseText = `**Transportation options to/from MetLife Stadium:**
+    - **NJ Transit Trains**: Departs directly from the Meadowlands Station outside **Gate C (South Entrance)**. Takes you to Secaucus Junction for direct transfers to New York Penn Station and Newark Penn Station. Trains run every 10 minutes post-match.
+    - **Shuttles**: Free event shuttles depart from **Gate B (East Entrance)** to secondary parking lots and local airport transit centers.
+    - **Ride-Share (Uber/Lyft)**: Dedicated pickup zone is located in Lot E, adjacent to **Gate A (North Entrance)**.
+    
+    *Eco-Note:* Taking public transit reduces your carbon footprint for the match by up to 80%!`;
   }
   else if (lowerPrompt.includes("translate") || lowerPrompt.includes("french") || lowerPrompt.includes("spanish") || lowerPrompt.includes("hindi") || lowerPrompt.includes("japanese") || lowerPrompt.includes("german")) {
-    responseText = `I can translate any phrase for you! Here are some common tournament inquiries in multiple languages:
+    responseText = `I can translate any statement! Here are standard inquiries translated:
     
-    - **French**: *"Où sont les toilettes les plus proches?"* (Where is the nearest restroom?)
-    - **Spanish**: *"¿Cómo llego al Sector 102?"* (How do I get to Sector 102?)
-    - **Hindi**: *"सूचना डेस्क कहाँ है?"* (Where is the info desk?)
-    - **Japanese**: *"ゲート3はどこですか？"* (Where is Gate 3?)
+    - **Spanish**: *"¿Dónde está el ascensor accesible?"* (Where is the accessible elevator?)
+    - **French**: *"Comment aller au Festival des Fans de la FIFA?"* (How do I get to the FIFA Fan Festival?)
+    - **Hindi**: *"पानी भरने का स्टेशन कहाँ है?"* (Where is the water refill station?)
+    - **Japanese**: *"バッグの持ち込み規制はどうなっていますか？"* (What is the bag policy?)
     
-    If you'd like a specific phrase translated, type: **Translate "[phrase]" to [Language]** or use the **AI Translator Card** in the Volunteer tab.`;
+    Just type: **Translate "[phrase]" to [Language]** or use the **AI Translator Card** in the Volunteer tab.`;
   }
   else if (lowerPrompt.includes("translate") && (lowerPrompt.includes("to") || lowerPrompt.includes("in"))) {
-    // Simple mock translation parser
     const match = prompt.match(/translate\s+["']?([^"']+)["']?\s+to\s+(\w+)/i);
     if (match) {
       const phrase = match[1];
       const lang = match[2].toLowerCase();
       const translations = {
-        spanish: { "where is the restroom": "¿Dónde está el baño?", "how do i get to gate 1": "¿Cómo llego a la puerta 1?", "is there a food court": "¿Hay un patio de comidas?" },
-        french: { "where is the restroom": "Où sont les toilettes?", "how do i get to gate 1": "Comment aller à la porte 1?", "is there a food court": "Y a-t-il une aire de restauration?" },
-        hindi: { "where is the restroom": "शौचालय कहाँ है?", "how do i get to gate 1": "गेट 1 पर कैसे जाएं?", "is there a food court": "क्या यहाँ कोई फूड कोर्ट है?" },
-        japanese: { "where is the restroom": "トイレはどこですか？", "how do i get to gate 1": "ゲート1への行き方は？", "is there a food court": "フードコートはありますか？" }
+        spanish: { "where is the elevator": "¿Dónde está el ascensor?", "how do i get to gate c": "¿Cómo llego a la puerta C?", "is water free": "¿El agua es gratis?" },
+        french: { "where is the elevator": "Où est l'ascenseur?", "how do i get to gate c": "Comment aller à la porte C?", "is water free": "L'eau est-elle gratuite?" },
+        hindi: { "where is the elevator": "लिफ्ट कहाँ है?", "how do i get to gate c": "गेट सी पर कैसे जाएं?", "is water free": "क्या पानी मुफ्त है?" },
+        japanese: { "where is the elevator": "エレベーターはどこですか？", "how do i get to gate c": "ゲートCへはどう行きますか？", "is water free": "水は無料ですか？" }
       };
       const cleanPhrase = phrase.trim().toLowerCase().replace(/[?.]/g, '');
       const translated = translations[lang]?.[cleanPhrase] || `[Simulated ${lang.toUpperCase()} translation of "${phrase}"]`;
       responseText = `**AI Translation Assistant:**
-      Original (${context.currentLanguage || 'English'}): "${phrase}"
+      Original: "${phrase}"
       Translated (${lang.charAt(0).toUpperCase() + lang.slice(1)}): **"${translated}"**`;
     } else {
-      responseText = "To translate a phrase, please use the format: **Translate \"[phrase]\" to [Language]**.";
+      responseText = "To translate a phrase, use the format: **Translate \"[phrase]\" to [Language]**.";
     }
   }
   else {
-    // Default system response
-    responseText = `Hello! I am the DC AI Assistant, your AI Venue Operations Guide. I am currently monitoring:
-    - Crowd levels: Gate 3 is currently the busiest entry point.
-    - Weather: Outdoor operations are running smoothly.
-    - Security Status: All gates green.
+    responseText = `Welcome to the FIFA World Cup 2026 Venue Portal! I am your GenAI Operations Assistant. I monitor MetLife Stadium operations:
+    - **Gates & Security**: Gates A, B, C, and D are fully active. Gate C NJ Transit station is experiencing high demand.
+    - **Eco Impact**: North & South Sustainability Hubs are active. Fans can utilize eco water refill stations.
+    - **Accessibility**: Central ADA Elevator Lobby is open for wheelchair routing.
     
-    Feel free to ask me about concessions, schedules, restrooms, or directions, or trigger different scenarios in the **Settings** panel to see how I dynamically adapt operations.`;
+    How can I help you navigate the stadium, review security policy, check match times, or translate phrases today?`;
   }
 
   // Simulate streaming text chunks
@@ -184,7 +231,6 @@ function streamSimulation(prompt, context, onChunk, onDone) {
   
   const timer = setInterval(() => {
     if (wordIndex < words.length) {
-      // Send a few words at a time for realism
       const chunk = words.slice(wordIndex, wordIndex + 2).join(" ") + " ";
       onChunk(chunk);
       wordIndex += 2;
@@ -224,10 +270,30 @@ export async function translateText({ text, targetLang, apiKey }) {
 
   // Fallback translator
   const mockTranslations = {
-    "es": { "Hello, how can I help you?": "Hola, ¿cómo puedo ayudarte?", "Where is your ticket?": "¿Dónde está tu boleto?", "The match is starting now.": "El partido está comenzando ahora.", "Please follow this path to Gate 3.": "Por favor, siga este camino hacia la Puerta 3." },
-    "fr": { "Hello, how can I help you?": "Bonjour, comment puis-je vous aider?", "Where is your ticket?": "Où est votre billet?", "The match is starting now.": "Le match commence maintenant.", "Please follow this path to Gate 3.": "Veuillez suivre ce chemin vers la porte 3." },
-    "hi": { "Hello, how can I help you?": "नमस्ते, मैं आपकी क्या मदद कर सकता हूँ?", "Where is your ticket?": "आपका टिकट कहाँ है?", "The match is starting now.": "मैच अभी शुरू हो रहा है।", "Please follow this path to Gate 3.": "कृपया गेट 3 के लिए इस मार्ग का अनुसरण करें।" },
-    "ja": { "Hello, how can I help you?": "こんにちは、何かお手伝いできますか？", "Where is your ticket?": "チケットはどこですか？", "The match is starting now.": "試合が今始まります。", "Please follow this path to Gate 3.": "ゲート3へはこの道を歩んでください。" }
+    "es": { 
+      "Hello, how can I help you?": "Hola, ¿cómo puedo ayudarte?", 
+      "Where is your ticket?": "¿Dónde está tu boleto?", 
+      "The match is starting now.": "El partido está comenzando ahora.", 
+      "Please follow this path to Gate 3.": "Por favor, siga este camino hacia la Puerta C." 
+    },
+    "fr": { 
+      "Hello, how can I help you?": "Bonjour, comment puis-je vous aider?", 
+      "Where is your ticket?": "Où est votre billet?", 
+      "The match is starting now.": "Le match commence maintenant.", 
+      "Please follow this path to Gate 3.": "Veuillez suivre ce chemin vers la porte C." 
+    },
+    "hi": { 
+      "Hello, how can I help you?": "नमस्ते, मैं आपकी क्या मदद कर सकता हूँ?", 
+      "Where is your ticket?": "आपका टिकट कहाँ है?", 
+      "The match is starting now.": "मैच अभी शुरू हो रहा है।", 
+      "Please follow this path to Gate 3.": "कृपया गेट सी के लिए इस मार्ग का अनुसरण करें।" 
+    },
+    "ja": { 
+      "Hello, how can I help you?": "こんにちは、何かお手伝いできますか？", 
+      "Where is your ticket?": "チケットはどこですか？", 
+      "The match is starting now.": "試合が今始まります。", 
+      "Please follow this path to Gate 3.": "ゲートCへはこの道を歩んでください。" 
+    }
   };
 
   const cleanText = text.trim();

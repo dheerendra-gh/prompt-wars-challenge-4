@@ -168,6 +168,95 @@ body {
   border: 1px solid rgba(0, 242, 254, 0.24);
 }
 
+/* Slogan Marquee Styles */
+.slogan-marquee-container {
+  flex: 1;
+  max-width: 45%;
+  height: 38px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(13, 17, 39, 0.45);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.08), inset 0 0 8px rgba(0, 242, 254, 0.04);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+
+.slogan-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 22s linear infinite;
+}
+
+.slogan-marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 25px;
+  white-space: nowrap;
+}
+
+.slogan-text {
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: 0.03em;
+  background: linear-gradient(90deg, #ffffff 30%, var(--neon-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--font-sans);
+}
+
+.football-emoji {
+  display: inline-block;
+  font-size: 16px;
+  animation: spin-football 3s linear infinite;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.slogan-marquee-container:hover .slogan-marquee-track {
+  animation-play-state: paused;
+}
+
+.slogan-marquee-container:hover .football-emoji {
+  animation: spin-football 0.8s linear infinite, bounce-football 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes spin-football {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce-football {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-5px) scale(1.05);
+  }
+}
+
+/* Hide marquee on very narrow screens to keep layout clean */
+@media (max-width: 900px) {
+  .slogan-marquee-container {
+    display: none;
+  }
+}
+
 .site-footer {
   position: relative;
   z-index: 3;
@@ -664,6 +753,100 @@ body {
 .svg-node.crowd-med circle { fill: rgba(245, 158, 11, 0.25); stroke: var(--color-warning); }
 .svg-node.crowd-high circle { fill: rgba(239, 68, 68, 0.25); stroke: var(--color-danger); }
 
+/* Custom Node Type Styles */
+.svg-node.node-type-eco circle {
+  stroke: var(--color-success);
+  fill: rgba(16, 185, 129, 0.15);
+  stroke-width: 2.5;
+  stroke-dasharray: 3, 2;
+}
+.svg-node.node-type-eco:hover circle {
+  stroke: #10b981;
+  fill: rgba(16, 185, 129, 0.35);
+  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.8));
+}
+
+.svg-node.node-type-elevator circle {
+  stroke: var(--neon-purple);
+  fill: rgba(168, 85, 247, 0.15);
+  stroke-width: 2.5;
+  stroke-dasharray: 3, 2;
+}
+.svg-node.node-type-elevator:hover circle {
+  stroke: var(--neon-purple);
+  fill: rgba(168, 85, 247, 0.35);
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.8));
+}
+
+/* Wayfinding Preferences Toggles */
+.routing-preferences-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 10px 0 2px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.preferences-title {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.preferences-toggles {
+  display: flex;
+  gap: 12px;
+}
+
+.pref-toggle-label {
+  cursor: pointer;
+  flex: 1;
+}
+
+.pref-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.pref-custom-btn {
+  display: block;
+  text-align: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: var(--transition-smooth);
+  user-select: none;
+}
+
+.pref-toggle-label:hover .pref-custom-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-main);
+}
+
+.pref-checkbox:checked + .pref-custom-btn {
+  border-color: var(--neon-purple);
+  background: rgba(168, 85, 247, 0.15);
+  color: #d8b4fe;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+}
+
+.pref-checkbox#pref-eco:checked + .pref-custom-btn {
+  border-color: var(--color-success);
+  background: rgba(16, 185, 129, 0.15);
+  color: #a7f3d0;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+}
+
 /* Breathe animation for the stadium outline */
 .map-svg ellipse:first-of-type {
   animation: breathe-stadium 5s infinite alternate ease-in-out;
@@ -796,6 +979,43 @@ body {
 }
 
 /* Event List styling */
+.genai-summary-box {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  color: var(--text-main);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-line;
+  margin-bottom: 14px;
+}
+
+.genai-highlight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.genai-highlight-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.genai-highlight-card h4 {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--neon-cyan);
+}
+
+.genai-highlight-card p {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
 .event-list {
   display: flex;
   flex-direction: column;

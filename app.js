@@ -1,7 +1,7 @@
 // Main Application Controller & State Orchestrator
 import { VENUE_NODES, VENUE_EDGES, EVENT_SCHEDULE, INITIAL_TASKS, SIMULATION_SCENARIOS } from "./data.js";
 import { renderVenueMap, findShortestPath, drawRoute } from "./map.js";
-import { sendMessageToAI, translateText } from "./ai.js";
+import { sendMessageToAI, translateText, buildOperationalIntelligenceSummary } from "./ai.js";
 
 // Global App State
 const state = {
@@ -13,7 +13,8 @@ const state = {
   recommendations: [],
   selectedNavNodes: { start: null, end: null },
   activePath: [],
-  chatHistory: []
+  chatHistory: [],
+  routePreferences: { accessibility: false, eco: false }
 };
 
 // Initialize App
@@ -133,6 +134,24 @@ function setupMapInteractions() {
 
   originSelect.addEventListener("change", onSelectorChange);
   destSelect.addEventListener("change", onSelectorChange);
+
+  // Listeners for routing preferences checkboxes
+  const prefAccessibility = document.getElementById("pref-accessibility");
+  const prefEco = document.getElementById("pref-eco");
+
+  if (prefAccessibility) {
+    prefAccessibility.addEventListener("change", (e) => {
+      state.routePreferences.accessibility = e.target.checked;
+      calculateAndDrawPath();
+    });
+  }
+
+  if (prefEco) {
+    prefEco.addEventListener("change", (e) => {
+      state.routePreferences.eco = e.target.checked;
+      calculateAndDrawPath();
+    });
+  }
 }
 
 // Node click handler passed to SVG map
@@ -177,8 +196,8 @@ function calculateAndDrawPath() {
     return;
   }
   
-  // Compute path using Dijkstra in map.js
-  const path = findShortestPath(VENUE_NODES, VENUE_EDGES, start, end);
+  // Compute path using Dijkstra in map.js with live crowd levels and routing preferences
+  const path = findShortestPath(VENUE_NODES, VENUE_EDGES, start, end, state.crowdLevels, state.routePreferences);
   state.activePath = path;
   
   // Draw path overlays on both maps
@@ -232,6 +251,27 @@ function calculateAndDrawPath() {
     } else {
       congestionWarning.style.display = "none";
       routeTime.style.color = "var(--neon-cyan)";
+    }
+
+    // Toggle custom preferences feedback rows
+    const ecoRow = document.getElementById("fan-eco-bonus-row");
+    const accessibilityRow = document.getElementById("fan-accessibility-bonus-row");
+    
+    if (ecoRow) {
+      const hasEcoNode = path.some(nodeId => VENUE_NODES[nodeId].type === "eco");
+      ecoRow.style.display = (state.routePreferences.eco && hasEcoNode) ? "flex" : "none";
+    }
+    
+    if (accessibilityRow) {
+      const hasElevatorNode = path.some(nodeId => VENUE_NODES[nodeId].type === "elevator");
+      if (state.routePreferences.accessibility) {
+        accessibilityRow.style.display = "flex";
+        document.getElementById("fan-accessibility-bonus-text").textContent = hasElevatorNode 
+          ? "Utilizing MetLife ADA elevators. 0 stairs." 
+          : "Step-free route. Standard ADA ramp access.";
+      } else {
+        accessibilityRow.style.display = "none";
+      }
     }
   } else {
     resultsCard.style.display = "none";
@@ -429,20 +469,22 @@ function triggerOperationalScenario(key) {
   // 3. Inject new Tasks into the Staff Dashboard
   if (key === "rain") {
     state.volunteerTasks = [
-      { id: "task_rain_1", title: "Establish umbrella stands at Gate 3", location: "gate_3", assignee: "Unassigned", status: "Pending", priority: "Medium" },
-      { id: "task_rain_2", title: "Clean slippery floor concourse A", location: "concession_a", assignee: "Volunteer Alex", status: "In-Progress", priority: "High" },
+      { id: "task_rain_1", title: "Establish umbrella bins at Gate C (South)", location: "gate_3", assignee: "Unassigned", status: "Pending", priority: "Medium" },
+      { id: "task_rain_2", title: "Dry slippery concourse floors near North Concourse", location: "concession_a", assignee: "Volunteer Alex", status: "In-Progress", priority: "High" },
+      { id: "task_rain_3", title: "Redirect supporters from flooded outer lawn to Sponsor Expo indoor booths", location: "sponsor_booth", assignee: "Volunteer Chloe", status: "In-Progress", priority: "Medium" },
       ...INITIAL_TASKS.filter(t => t.id !== "task_3")
     ];
   } else if (key === "emergency") {
     state.volunteerTasks = [
-      { id: "task_em_1", title: "Erect Gate 2 redirection barricades", location: "gate_2", assignee: "Unassigned", status: "Pending", priority: "High" },
-      { id: "task_em_2", title: "Direct crowd traffic to Gate 1 shuttles", location: "gate_1", assignee: "Volunteer Chloe", status: "In-Progress", priority: "High" },
-      { id: "task_em_3", title: "Deploy digital translation tablets at desk", location: "info_desk", assignee: "Volunteer Alex", status: "In-Progress", priority: "Medium" }
+      { id: "task_em_1", title: "Erect ticketing lane barricades at Gate B (East)", location: "gate_2", assignee: "Unassigned", status: "Pending", priority: "High" },
+      { id: "task_em_2", title: "Direct shuttle bus arrivals at Gate A (North)", location: "gate_1", assignee: "Volunteer Chloe", status: "In-Progress", priority: "High" },
+      { id: "task_em_3", title: "Assist lost supporters with train delay schedule translations", location: "info_desk", assignee: "Volunteer Alex", status: "In-Progress", priority: "Medium" }
     ];
   } else if (key === "sponsor") {
     state.volunteerTasks = [
-      { id: "task_sp_1", title: "Form orderly queue line at sponsor booths", location: "sponsor_booth", assignee: "Unassigned", status: "Pending", priority: "Medium" },
-      { id: "task_sp_2", title: "Setup portable barriers at sector 104 lobby", location: "sector_104", assignee: "Volunteer Chloe", status: "In-Progress", priority: "Low" }
+      { id: "task_sp_1", title: "Distribute public transit reward codes to exiting supporters", location: "gate_3", assignee: "Unassigned", status: "Pending", priority: "Medium" },
+      { id: "task_sp_2", title: "Direct ADA wheelchair egress queues towards West Gate D Elevator", location: "elevator_lobby", assignee: "Volunteer Chloe", status: "In-Progress", priority: "Low" },
+      { id: "task_sp_3", title: "Form orderly line at South recycling refund bins", location: "eco_hub_south", assignee: "Unassigned", status: "Pending", priority: "Low" }
     ];
   } else {
     // Normal resets
@@ -493,6 +535,7 @@ function renderAll() {
   renderRecommendations();
   renderSchedule();
   renderVolunteerTasks();
+  renderGenAIHighlights();
 }
 
 function renderStats() {
@@ -653,6 +696,64 @@ function approveAIRecommendation(recId) {
   }
   
   renderAll();
+}
+
+function renderGenAIHighlights() {
+  const container = document.getElementById("genai-highlight-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const highlights = [
+    {
+      title: "AI Navigation Assistant (ADA & Eco)",
+      text: "Real-time Dijkstra routing. Toggle Accessibility to utilize MetLife ADA Elevator loops, or Eco-mode to map via Sustainability Hubs."
+    },
+    {
+      title: "FIFA Crowd Intelligence",
+      text: "Generative AI monitors stadium entrance bottlenecks (NJ Transit rail outage, thunderstorm) and provides operations briefings."
+    },
+    {
+      title: "Multilingual Assistance Desk",
+      text: "Supporters and volunteer staff receive instant voice translation for international teams (Spanish, French, Hindi, Japanese)."
+    },
+    {
+      title: "Green & Accessible Operations",
+      text: "GenAI supports real-time solar energy status, plastic bottle savings tracking, and ADA helper tasks assignments."
+    }
+  ];
+
+  highlights.forEach((item) => {
+    const card = document.createElement("div");
+    card.className = "genai-highlight-card";
+    card.innerHTML = `
+      <h4>${item.title}</h4>
+      <p>${item.text}</p>
+    `;
+    container.appendChild(card);
+  });
+
+  const summary = document.getElementById("genai-operations-summary");
+  if (summary) {
+    let energySavings = 85;
+    if (state.activeScenario === "rain") energySavings = 35;
+    if (state.activeScenario === "emergency") energySavings = 75;
+    if (state.activeScenario === "sponsor") energySavings = 90;
+
+    let plasticSaved = 1420;
+    if (state.routePreferences.eco) plasticSaved += 320;
+    if (state.activeScenario === "sponsor") plasticSaved += 480;
+
+    summary.textContent = buildOperationalIntelligenceSummary({
+      activeScenario: state.activeScenario,
+      crowdLevels: state.crowdLevels,
+      volunteerCount: state.volunteerTasks.filter((task) => task.status === "In-Progress").length,
+      accessibilityRequests: state.volunteerTasks.filter(t => t.location === "gate_4" || t.location === "elevator_lobby" || t.title.toLowerCase().includes("wheelchair") || t.title.toLowerCase().includes("ada")).length + 2,
+      transportDemand: state.activeScenario === "emergency" ? 8 : 4,
+      plasticSaved: plasticSaved,
+      energySavings: energySavings
+    });
+  }
 }
 
 function renderSchedule() {

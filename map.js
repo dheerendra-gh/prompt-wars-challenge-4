@@ -4,7 +4,7 @@
  * Dijkstra Shortest Path Algorithm
  * Returns an array of node IDs representing the path from startId to endId.
  */
-export function findShortestPath(nodes, edges, startId, endId) {
+export function findShortestPath(nodes, edges, startId, endId, crowdLevels = {}, preferences = { accessibility: false, eco: false }) {
   if (!nodes[startId] || !nodes[endId]) return [];
   if (startId === endId) return [startId];
 
@@ -45,12 +45,50 @@ export function findShortestPath(nodes, edges, startId, endId) {
       const neighborId = edge.from === currentId ? edge.to : edge.from;
       if (!unvisited.has(neighborId)) continue;
 
-      // Calculate path weight (consider line congestion as penalty if needed)
-      // Standard weight + crowd factor penalty
-      const nodeCrowd = nodes[neighborId].currentCrowd || 0;
-      const congestionPenalty = nodeCrowd > 75 ? edge.weight * 2.5 : (nodeCrowd > 50 ? edge.weight * 1.5 : 0);
+      // Get live crowd level
+      const nodeCrowd = crowdLevels[neighborId] || nodes[neighborId].baseCrowd || 0;
       
-      const tentativeDistance = distances[currentId] + edge.weight + congestionPenalty;
+      // Base distance weight
+      let weight = edge.weight;
+
+      // Normal congestion penalty
+      let congestionPenalty = 0;
+      if (nodeCrowd > 70) {
+        congestionPenalty = edge.weight * 2.5;
+      } else if (nodeCrowd > 40) {
+        congestionPenalty = edge.weight * 1.5;
+      }
+      
+      // Preference modifiers
+      let preferenceModifier = 0;
+      
+      if (preferences.accessibility) {
+        // Accessibility Mode:
+        // - Large penalty for crowded zones (strollers, wheelchairs struggle with high crowd density)
+        if (nodeCrowd > 70) {
+          preferenceModifier += 500;
+        } else if (nodeCrowd > 40) {
+          preferenceModifier += 200;
+        }
+        
+        // - Heavy preference (discount) for elevators
+        if (nodes[neighborId].type === "elevator") {
+          preferenceModifier -= 150;
+        }
+      }
+      
+      if (preferences.eco) {
+        // Eco-Friendly Mode:
+        // - Heavy preference (discount) for passing green/eco water hubs
+        if (nodes[neighborId].type === "eco") {
+          preferenceModifier -= 180;
+        }
+      }
+
+      // Ensure final edge weight is non-negative and has a small baseline to avoid zero/negative loops
+      const finalWeight = Math.max(10, weight + congestionPenalty + preferenceModifier);
+      
+      const tentativeDistance = distances[currentId] + finalWeight;
       
       if (tentativeDistance < distances[neighborId]) {
         distances[neighborId] = tentativeDistance;
@@ -130,7 +168,7 @@ export function renderVenueMap(svgEl, nodes, edges, crowdLevels = {}, onNodeClic
     else if (crowd > 40) densityClass = "crowd-med";
 
     const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    nodeG.setAttribute("class", `svg-node ${densityClass}`);
+    nodeG.setAttribute("class", `svg-node ${densityClass} node-type-${node.type}`);
     nodeG.setAttribute("data-id", nodeId);
     
     if (selectedNodes.start === nodeId || selectedNodes.end === nodeId) {
@@ -178,6 +216,8 @@ export function renderVenueMap(svgEl, nodes, edges, crowdLevels = {}, onNodeClic
     else if (node.type === "restroom") nodeIcon = "🚻";
     else if (node.type === "info") nodeIcon = "ℹ️";
     else if (node.type === "seating") nodeIcon = "🏟️";
+    else if (node.type === "eco") nodeIcon = "🌱";
+    else if (node.type === "elevator") nodeIcon = "🛗";
 
     // Text Label below Node
     const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
