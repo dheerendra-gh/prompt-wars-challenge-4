@@ -15,7 +15,7 @@
   <header class="site-header">
     <div class="site-brand">
       <div class="brand-logo" id="site-header-logo">
-        <svg viewBox="0 0 100 100" width="36" height="36" style="filter: drop-shadow(0 0 5px var(--neon-cyan)); display: block;">
+        <svg viewBox="0 0 100 100" width="36" height="36" style="filter: drop-shadow(0 0 5px var(--neon-cyan)); display: block;" aria-hidden="true">
           <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-cyan)" stroke-width="4.5" />
           <circle cx="50" cy="50" r="38" fill="none" stroke="var(--neon-blue)" stroke-width="1.5" stroke-dasharray="6, 3" />
           <text x="50" y="59" font-family="'Outfit', sans-serif" font-weight="900" font-size="28" fill="#ffffff" text-anchor="middle" letter-spacing="-1">DC</text>
@@ -77,14 +77,14 @@
       <div class="sidebar-top">
         <div class="brand-section">
           <div class="brand-logo" id="dc-logo-container">
-            <svg viewBox="0 0 100 100" width="38" height="38" style="filter: drop-shadow(0 0 5px var(--neon-cyan)); display: block;">
+            <svg viewBox="0 0 100 100" width="38" height="38" style="filter: drop-shadow(0 0 5px var(--neon-cyan)); display: block;" aria-hidden="true">
               <circle cx="50" cy="50" r="45" fill="none" stroke="var(--neon-cyan)" stroke-width="4.5" />
               <circle cx="50" cy="50" r="38" fill="none" stroke="var(--neon-blue)" stroke-width="1.5" stroke-dasharray="6, 3" />
               <text x="50" y="59" font-family="'Outfit', sans-serif" font-weight="900" font-size="28" fill="#ffffff" text-anchor="middle" letter-spacing="-1">DC</text>
             </svg>
           </div>
           <div class="brand-title">
-            <h1>METLIFE LIVE</h1>
+            <h2>METLIFE LIVE</h2>
             <span>FIFA 2026™ Ops</span>
           </div>
         </div>
@@ -264,11 +264,11 @@
                 <span class="preferences-title">Routing Options:</span>
                 <div class="preferences-toggles">
                   <label class="pref-toggle-label">
-                    <input type="checkbox" id="pref-accessibility" class="pref-checkbox">
+                    <input type="checkbox" id="pref-accessibility" class="pref-checkbox" aria-label="Accessible (ADA)">
                     <span class="pref-custom-btn">♿ Accessible (ADA)</span>
                   </label>
                   <label class="pref-toggle-label">
-                    <input type="checkbox" id="pref-eco" class="pref-checkbox">
+                    <input type="checkbox" id="pref-eco" class="pref-checkbox" aria-label="Eco-Friendly">
                     <span class="pref-custom-btn">🌱 Eco-Friendly</span>
                   </label>
                 </div>
@@ -373,11 +373,11 @@
             </p>
             
             <div class="language-selectors">
-              <select id="translator-source-lang" class="styled-select" disabled>
+              <select id="translator-source-lang" class="styled-select" disabled aria-label="Source Language">
                 <option value="en">English</option>
               </select>
-               <button class="swap-languages" title="Disabled for English source" aria-label="Swap source and target languages">⇄</button>
-              <select id="translator-target-lang" class="styled-select">
+               <button id="translator-swap-btn" class="swap-languages" title="Disabled for English source" aria-label="Swap source and target languages">⇄</button>
+              <select id="translator-target-lang" class="styled-select" aria-label="Target Language">
                 <option value="es">Spanish (Español)</option>
                 <option value="fr">French (Français)</option>
                 <option value="hi" selected>Hindi (हिन्दी)</option>
@@ -386,7 +386,7 @@
             </div>
 
             <div class="translation-grid">
-              <textarea id="translator-input-text" class="translation-textarea" placeholder="Type message in English... (e.g., 'Hello, how can I help you?')"></textarea>
+              <textarea id="translator-input-text" class="translation-textarea" placeholder="Type message in English... (e.g., 'Hello, how can I help you?')" aria-label="Text to translate"></textarea>
               
               <div class="translation-output-box" id="translator-output-box">
                 <span class="translation-output-placeholder">Translated message will appear here...</span>
@@ -438,23 +438,23 @@
               Personalize the visual identity of the MetLife Command Center. Choose from high-fidelity gradient templates designed for optimal readability during day/night operations.
             </p>
              <div class="theme-selection-grid" id="theme-selector-grid" role="radiogroup" aria-label="Select Application Theme">
-               <div class="theme-card active" data-theme="midnight" role="radio" aria-checked="true" tabindex="0" aria-label="Midnight Neon Theme">
+               <div class="theme-card active" id="theme-card-midnight" data-theme="midnight" role="radio" aria-checked="true" tabindex="0" aria-label="Midnight Neon Theme">
                  <div class="theme-preview-circle" style="background: linear-gradient(135deg, #070913, #1a2346);"></div>
                  <span class="theme-card-title">Midnight Neon</span>
                </div>
-               <div class="theme-card" data-theme="forest" role="radio" aria-checked="false" tabindex="0" aria-label="Emerald Pitch Theme">
+               <div class="theme-card" id="theme-card-forest" data-theme="forest" role="radio" aria-checked="false" tabindex="0" aria-label="Emerald Pitch Theme">
                  <div class="theme-preview-circle" style="background: linear-gradient(135deg, #040b08, #0c2b1c);"></div>
                  <span class="theme-card-title">Emerald Pitch</span>
                </div>
-               <div class="theme-card" data-theme="sunset" role="radio" aria-checked="false" tabindex="0" aria-label="Stadium Crimson Theme">
+               <div class="theme-card" id="theme-card-sunset" data-theme="sunset" role="radio" aria-checked="false" tabindex="0" aria-label="Stadium Crimson Theme">
                  <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0c0408, #2e0c1f);"></div>
                  <span class="theme-card-title">Stadium Crimson</span>
                </div>
-               <div class="theme-card" data-theme="cyber" role="radio" aria-checked="false" tabindex="0" aria-label="Cyberpunk Gold Theme">
+               <div class="theme-card" id="theme-card-cyber" data-theme="cyber" role="radio" aria-checked="false" tabindex="0" aria-label="Cyberpunk Gold Theme">
                  <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0c0903, #302009);"></div>
                  <span class="theme-card-title">Cyberpunk Gold</span>
                </div>
-               <div class="theme-card" data-theme="carbon" role="radio" aria-checked="false" tabindex="0" aria-label="Tactical Carbon Theme">
+               <div class="theme-card" id="theme-card-carbon" data-theme="carbon" role="radio" aria-checked="false" tabindex="0" aria-label="Tactical Carbon Theme">
                  <div class="theme-preview-circle" style="background: linear-gradient(135deg, #0d0d0d, #262626);"></div>
                  <span class="theme-card-title">Tactical Carbon</span>
                </div>

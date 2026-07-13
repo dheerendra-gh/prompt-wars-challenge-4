@@ -31,16 +31,35 @@ function request(server, pathName) {
   });
 }
 
-test('server serves the homepage and blocks path traversal', async () => {
+test('server serves the homepage, styles, scripts, handles 404, and blocks path traversal', async () => {
   const server = createServer();
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 
   try {
+    // 1. Verify Home Page
     const homeResponse = await request(server, '/');
     assert.equal(homeResponse.statusCode, 200);
     assert.match(homeResponse.headers['content-type'] || '', /text\/html/);
+    assert.equal(homeResponse.headers['permissions-policy'], 'unload=*');
     assert.match(homeResponse.body, /METLIFE LIVE/);
 
+    // 2. Verify Stylesheet MIME Type and Header
+    const cssResponse = await request(server, '/style.css');
+    assert.equal(cssResponse.statusCode, 200);
+    assert.match(cssResponse.headers['content-type'] || '', /text\/css/);
+    assert.equal(cssResponse.headers['permissions-policy'], 'unload=*');
+
+    // 3. Verify App Script MIME Type and Header
+    const jsResponse = await request(server, '/app.js');
+    assert.equal(jsResponse.statusCode, 200);
+    assert.match(jsResponse.headers['content-type'] || '', /application\/javascript/);
+    assert.equal(jsResponse.headers['permissions-policy'], 'unload=*');
+
+    // 4. Verify 404 Not Found
+    const missingResponse = await request(server, '/non-existent-file.html');
+    assert.equal(missingResponse.statusCode, 404);
+
+    // 5. Verify Block Path Traversal
     const traversalResponse = await request(server, '/..%2Fpackage.json');
     assert.equal(traversalResponse.statusCode, 403);
   } finally {

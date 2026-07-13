@@ -133,70 +133,8 @@ function streamSimulation(prompt, context, onChunk, onDone) {
   let responseText = "";
 
   // Intent classification
-  if (lowerPrompt.includes("navigate") || lowerPrompt.includes("route") || lowerPrompt.includes("direction") || lowerPrompt.includes("get to") || lowerPrompt.includes("where is section") || lowerPrompt.includes("go to") || lowerPrompt.includes("elevator") || lowerPrompt.includes("wheelchair")) {
-    responseText = `To navigate MetLife Stadium, please use the **Smart Indoor Navigation** tool on the left. 
-    Select your current origin and destination (e.g., Gate A to Section 140 VIP).
-    
-    *GenAI Smart Toggles:*
-    1. **♿ Accessible (ADA) Mode**: Select this preference to route through the **Central ADA Elevator Lobby** and avoid stairs and high crowd corridors.
-    2. **🌱 Eco-Friendly Mode**: Select this to route through the **North/South Sustainability Hubs** so you can refill your water bottles and bypass single-use plastic zones.
-    
-    *Live Traffic Status:* Congestion is currently high around **${context.congestedNode || 'no gates'}** due to the match.`;
-  } 
-  else if (lowerPrompt.includes("food") || lowerPrompt.includes("concession") || lowerPrompt.includes("eat") || lowerPrompt.includes("drink") || lowerPrompt.includes("burger") || lowerPrompt.includes("taco") || lowerPrompt.includes("empanada")) {
-    const crowdA = context.crowdLevels?.concession_a || 65;
-    const crowdB = context.crowdLevels?.concession_b || 40;
-    responseText = `MetLife Stadium concession options for the FIFA World Cup 2026:
-    1. **Concession Area North (near Section 120)**: Burgers, hot dogs, fries, and draft beers. Operating at **${crowdA}% capacity** (${crowdA > 60 ? 'Busy' : 'Normal'}).
-    2. **Concession Area South (near Section 130)**: Street tacos, empanadas, churros, and soda. Operating at **${crowdB}% capacity** (${crowdB > 60 ? 'Busy' : 'Normal'}).
-    
-    *Eco Refill:* Both areas are supported by adjacent **Sustainability Hubs** for free filtered water. 
-    *Queue Tip:* Head to **${crowdA < crowdB ? 'Concession North' : 'Concession South'}** for shorter wait times right now!`;
-  }
-  else if (lowerPrompt.includes("restroom") || lowerPrompt.includes("toilet") || lowerPrompt.includes("washroom") || lowerPrompt.includes("bath")) {
-    const crowdA = context.crowdLevels?.restroom_a || 30;
-    const crowdB = context.crowdLevels?.restroom_b || 45;
-    responseText = `Restrooms are located in the main concourse loops:
-    - **Restrooms Block A (North-West near Section 110)**: Male, Female, All-Gender, and ADA wheelchair facilities. Load is **${crowdA}%** (Wait time: ~${Math.round(crowdA/10)} mins).
-    - **Restrooms Block B (South-East near Section 130)**: Male, Female, All-Gender, and ADA wheelchair facilities. Load is **${crowdB}%** (Wait time: ~${Math.round(crowdB/10)} mins).
-    
-    *Recommendation:* Head to **${crowdA < crowdB ? 'Restrooms Block A' : 'Restrooms Block B'}** for faster service.`;
-  }
-  else if (lowerPrompt.includes("schedule") || lowerPrompt.includes("match") || lowerPrompt.includes("time") || lowerPrompt.includes("play") || lowerPrompt.includes("game")) {
-    responseText = `Here is today's FIFA World Cup 2026 Matchday schedule at MetLife Stadium:
-    - **01:00 PM** - Gates & Security Screening Open *(Completed)*
-    - **03:30 PM** - FIFA Fan Festival Live sponsor concert *(Completed)*
-    - **06:00 PM** - Group B Match: **USA vs England** *(Ongoing - MetLife Pitch)*
-    - **08:30 PM** - Group B Match: **Mexico vs Argentina** *(Upcoming)*
-    - **11:00 PM** - Post-match egress & NJ Transit trains departure *(Upcoming)*
-    
-    *Fan Advisory:* Transit queues at **Gate C (NJ Transit)** are expected to surge starting at **08:00 PM** as USA vs England fans head out.`;
-  }
-  else if (lowerPrompt.includes("bag") || lowerPrompt.includes("policy") || lowerPrompt.includes("clear bag") || lowerPrompt.includes("security")) {
-    responseText = `**FIFA World Cup 2026 Security & Bag Policy at MetLife Stadium:**
-    - Only **clear plastic, vinyl, or PVC bags** that do not exceed **12" x 6" x 12"** are allowed.
-    - Small clutch bags/purses (non-clear) are permitted if they do not exceed **4.5" x 6.5"** in size.
-    - All bags are subject to security screening. Medically necessary items and strollers are allowed but must go through specialized screening lanes at **Gate D (West VIP & Accessibility)**.`;
-  }
-  else if (lowerPrompt.includes("train") || lowerPrompt.includes("nyc") || lowerPrompt.includes("transport") || lowerPrompt.includes("shuttle") || lowerPrompt.includes("nj transit")) {
-    responseText = `**Transportation options to/from MetLife Stadium:**
-    - **NJ Transit Trains**: Departs directly from the Meadowlands Station outside **Gate C (South Entrance)**. Takes you to Secaucus Junction for direct transfers to New York Penn Station and Newark Penn Station. Trains run every 10 minutes post-match.
-    - **Shuttles**: Free event shuttles depart from **Gate B (East Entrance)** to secondary parking lots and local airport transit centers.
-    - **Ride-Share (Uber/Lyft)**: Dedicated pickup zone is located in Lot E, adjacent to **Gate A (North Entrance)**.
-    
-    *Eco-Note:* Taking public transit reduces your carbon footprint for the match by up to 80%!`;
-  }
-  else if (lowerPrompt.includes("translate") || lowerPrompt.includes("french") || lowerPrompt.includes("spanish") || lowerPrompt.includes("hindi") || lowerPrompt.includes("japanese") || lowerPrompt.includes("german")) {
-    responseText = `I can translate any statement! Here are standard inquiries translated:
-    
-    - **Spanish**: *"¿Dónde está el ascensor accesible?"* (Where is the accessible elevator?)
-    - **French**: *"Comment aller au Festival des Fans de la FIFA?"* (How do I get to the FIFA Fan Festival?)
-    - **Hindi**: *"पानी भरने का स्टेशन कहाँ है?"* (Where is the water refill station?)
-    - **Japanese**: *"バッグの持ち込み規制はどうなっていますか？"* (What is the bag policy?)
-    
-    Just type: **Translate "[phrase]" to [Language]** or use the **AI Translator Card** in the Volunteer tab.`;
-  }
-  else if (lowerPrompt.includes("translate") && (lowerPrompt.includes("to") || lowerPrompt.includes("in"))) {
+  // 1. Specific inline translation request (must be first to avoid conflicts with terms in navigation/food/etc)
+  if (lowerPrompt.includes("translate") && (lowerPrompt.includes("to") || lowerPrompt.includes("in"))) {
     const match = prompt.match(/translate\s+["']?([^"']+)["']?\s+to\s+(\w+)/i);
     if (match) {
       const phrase = match[1];
@@ -216,6 +154,77 @@ function streamSimulation(prompt, context, onChunk, onDone) {
       responseText = "To translate a phrase, use the format: **Translate \"[phrase]\" to [Language]**.";
     }
   }
+  // 2. General translation advice / list
+  else if (lowerPrompt.includes("translate") || lowerPrompt.includes("french") || lowerPrompt.includes("spanish") || lowerPrompt.includes("hindi") || lowerPrompt.includes("japanese") || lowerPrompt.includes("german")) {
+    responseText = `I can translate any statement! Here are standard inquiries translated:
+    
+    - **Spanish**: *"¿Dónde está el ascensor accesible?"* (Where is the accessible elevator?)
+    - **French**: *"Comment aller au Festival des Fans de la FIFA?"* (How do I get to the FIFA Fan Festival?)
+    - **Hindi**: *"पानी भरने का स्टेशन कहाँ है?"* (Where is the water refill station?)
+    - **Japanese**: *"バッグの持ち込み規制はどうなっていますか？"* (What is the bag policy?)
+    
+    Just type: **Translate "[phrase]" to [Language]** or use the **AI Translator Card** in the Volunteer tab.`;
+  }
+  // 3. Navigation
+  else if (lowerPrompt.includes("navigate") || lowerPrompt.includes("route") || lowerPrompt.includes("direction") || lowerPrompt.includes("get to") || lowerPrompt.includes("where is section") || lowerPrompt.includes("go to") || lowerPrompt.includes("elevator") || lowerPrompt.includes("wheelchair")) {
+    responseText = `To navigate MetLife Stadium, please use the **Smart Indoor Navigation** tool on the left. 
+    Select your current origin and destination (e.g., Gate A to Section 140 VIP).
+    
+    *GenAI Smart Toggles:*
+    1. **♿ Accessible (ADA) Mode**: Select this preference to route through the **Central ADA Elevator Lobby** and avoid stairs and high crowd corridors.
+    2. **🌱 Eco-Friendly Mode**: Select this to route through the **North/South Sustainability Hubs** so you can refill your water bottles and bypass single-use plastic zones.
+    
+    *Live Traffic Status:* Congestion is currently high around **${context.congestedNode || 'no gates'}** due to the match.`;
+  } 
+  // 4. Concessions & Food
+  else if (lowerPrompt.includes("food") || lowerPrompt.includes("concession") || lowerPrompt.includes("eat") || lowerPrompt.includes("drink") || lowerPrompt.includes("burger") || lowerPrompt.includes("taco") || lowerPrompt.includes("empanada")) {
+    const crowdA = context.crowdLevels?.concession_a || 65;
+    const crowdB = context.crowdLevels?.concession_b || 40;
+    responseText = `MetLife Stadium concession options for the FIFA World Cup 2026:
+    1. **Concession Area North (near Section 120)**: Burgers, hot dogs, fries, and draft beers. Operating at **${crowdA}% capacity** (${crowdA > 60 ? 'Busy' : 'Normal'}).
+    2. **Concession Area South (near Section 130)**: Street tacos, empanadas, churros, and soda. Operating at **${crowdB}% capacity** (${crowdB > 60 ? 'Busy' : 'Normal'}).
+    
+    *Eco Refill:* Both areas are supported by adjacent **Sustainability Hubs** for free filtered water. 
+    *Queue Tip:* Head to **${crowdA < crowdB ? 'Concession North' : 'Concession South'}** for shorter wait times right now!`;
+  }
+  // 5. Restrooms
+  else if (lowerPrompt.includes("restroom") || lowerPrompt.includes("toilet") || lowerPrompt.includes("washroom") || lowerPrompt.includes("bath")) {
+    const crowdA = context.crowdLevels?.restroom_a || 30;
+    const crowdB = context.crowdLevels?.restroom_b || 45;
+    responseText = `Restrooms are located in the main concourse loops:
+    - **Restrooms Block A (North-West near Section 110)**: Male, Female, All-Gender, and ADA wheelchair facilities. Load is **${crowdA}%** (Wait time: ~${Math.round(crowdA/10)} mins).
+    - **Restrooms Block B (South-East near Section 130)**: Male, Female, All-Gender, and ADA wheelchair facilities. Load is **${crowdB}%** (Wait time: ~${Math.round(crowdB/10)} mins).
+    
+    *Recommendation:* Head to **${crowdA < crowdB ? 'Restrooms Block A' : 'Restrooms Block B'}** for faster service.`;
+  }
+  // 6. Tournament Schedule
+  else if (lowerPrompt.includes("schedule") || lowerPrompt.includes("match") || lowerPrompt.includes("time") || lowerPrompt.includes("play") || lowerPrompt.includes("game")) {
+    responseText = `Here is today's FIFA World Cup 2026 Matchday schedule at MetLife Stadium:
+    - **01:00 PM** - Gates & Security Screening Open *(Completed)*
+    - **03:30 PM** - FIFA Fan Festival Live sponsor concert *(Completed)*
+    - **06:00 PM** - Group B Match: **USA vs England** *(Ongoing - MetLife Pitch)*
+    - **08:30 PM** - Group B Match: **Mexico vs Argentina** *(Upcoming)*
+    - **11:00 PM** - Post-match egress & NJ Transit trains departure *(Upcoming)*
+    
+    *Fan Advisory:* Transit queues at **Gate C (NJ Transit)** are expected to surge starting at **08:00 PM** as USA vs England fans head out.`;
+  }
+  // 7. Security / Bag Policy
+  else if (lowerPrompt.includes("bag") || lowerPrompt.includes("policy") || lowerPrompt.includes("clear bag") || lowerPrompt.includes("security")) {
+    responseText = `**FIFA World Cup 2026 Security & Bag Policy at MetLife Stadium:**
+    - Only **clear plastic, vinyl, or PVC bags** that do not exceed **12" x 6" x 12"** are allowed.
+    - Small clutch bags/purses (non-clear) are permitted if they do not exceed **4.5" x 6.5"** in size.
+    - All bags are subject to security screening. Medically necessary items and strollers are allowed but must go through specialized screening lanes at **Gate D (West VIP & Accessibility)**.`;
+  }
+  // 8. Transit & Train links
+  else if (lowerPrompt.includes("train") || lowerPrompt.includes("nyc") || lowerPrompt.includes("transport") || lowerPrompt.includes("shuttle") || lowerPrompt.includes("nj transit")) {
+    responseText = `**Transportation options to/from MetLife Stadium:**
+    - **NJ Transit Trains**: Departs directly from the Meadowlands Station outside **Gate C (South Entrance)**. Takes you to Secaucus Junction for direct transfers to New York Penn Station and Newark Penn Station. Trains run every 10 minutes post-match.
+    - **Shuttles**: Free event shuttles depart from **Gate B (East Entrance)** to secondary parking lots and local airport transit centers.
+    - **Ride-Share (Uber/Lyft)**: Dedicated pickup zone is located in Lot E, adjacent to **Gate A (North Entrance)**.
+    
+    *Eco-Note:* Taking public transit reduces your carbon footprint for the match by up to 80%!`;
+  }
+  // 9. Default Fallback Info
   else {
     responseText = `Welcome to the FIFA World Cup 2026 Venue Portal! I am your GenAI Operations Assistant. I monitor MetLife Stadium operations:
     - **Gates & Security**: Gates A, B, C, and D are fully active. Gate C NJ Transit station is experiencing high demand.

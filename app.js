@@ -430,6 +430,10 @@ function setupScenarioSimulator() {
     const triggerCard = document.createElement("div");
     triggerCard.className = `sim-trigger-card ${state.activeScenario === key ? 'active' : ''}`;
     triggerCard.setAttribute("data-scenario-key", key);
+    triggerCard.setAttribute("tabindex", "0");
+    triggerCard.setAttribute("role", "button");
+    triggerCard.setAttribute("aria-label", `Trigger ${scenario.name} Scenario. ${scenario.description}`);
+    triggerCard.setAttribute("id", `sim-trigger-${key}`);
     
     triggerCard.innerHTML = `
       <div class="sim-trigger-header">
@@ -441,6 +445,13 @@ function setupScenarioSimulator() {
     
     triggerCard.addEventListener("click", () => {
       triggerOperationalScenario(key);
+    });
+
+    triggerCard.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        triggerOperationalScenario(key);
+      }
     });
     
     simGrid.appendChild(triggerCard);
@@ -670,7 +681,7 @@ function renderRecommendations() {
         <span>${typeLabel} Recommendation</span>
       </div>
       <div class="rec-text">${rec.text}</div>
-      <button class="rec-button" data-id="${rec.id}">${rec.actionLabel}</button>
+      <button class="rec-button" id="rec-btn-${rec.id}" data-id="${rec.id}">${rec.actionLabel}</button>
     `;
     
     // Add event listener to recommendation button
@@ -861,9 +872,9 @@ function renderVolunteerTasks() {
       </div>
       <div class="task-actions">
         ${task.status === "Pending" ? 
-          `<button class="task-btn claim" data-id="${task.id}">Claim Task</button>` : 
+          `<button class="task-btn claim" id="task-claim-btn-${task.id}" data-id="${task.id}">Claim Task</button>` : 
           (task.status === "In-Progress" ? 
-            `<button class="task-btn complete" data-id="${task.id}">Mark Complete</button>` : 
+            `<button class="task-btn complete" id="task-complete-btn-${task.id}" data-id="${task.id}">Mark Complete</button>` : 
             `<span style="color:var(--color-success); font-size:12px; font-weight:600; padding: 4px;">✓ Completed</span>`
           )
         }
