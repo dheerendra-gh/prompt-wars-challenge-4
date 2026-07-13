@@ -50,6 +50,7 @@ export function createServer() {
         const ext = path.extname(requestedFilePath).toLowerCase();
         res.statusCode = 200;
         res.setHeader('Content-Type', MIME_TYPES[ext] || 'application/octet-stream');
+        res.setHeader('Permissions-Policy', 'unload=*');
         res.end(content);
       }
     });
